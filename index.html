@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+		.main{
+			width:500px;
+			height:500px;
+			border: 1px solid #2c3f7f;
+		}
+		.in{
+			color:#39b133;
+		}
+		.out{
+			color: red;
+		}
+		.msg{
+			color: #000;
+		}
+		</style>
+	</head>
+	<body>
+		<input type="text" placeholder="请输入内容"/>
+		<button>发送消息</button>
+		<div class="main"></div>
+		
+		<script>
+			var socket = new WebSocket('ws://localhost:3000')
+			var div = document.querySelector('div')
+			socket.addEventListener('open',function(){
+				div.innerHTML = '连接服务成功'
+			})
+			var input = document.querySelector('input')
+			var button = document.querySelector('button');
+			button.addEventListener('click',function(){
+				var value = input.value;
+				socket.send(value)
+				input.value = ''
+			})
+			socket.addEventListener('message',function(e){
+				let data = JSON.parse(e.data);
+				var one = document.createElement('div')
+				console.log(data)
+				one.innerText = data.msg + '  -----'+ data.time;
+				one.className = data.type;
+				div.appendChild(one);
+			})
+			socket.addEventListener('close',function(){
+				div.innerHTML = '服务断开'
+			})
+		</script>
+	</body>
+</html>
